@@ -4,7 +4,7 @@
 #include "WriteMaxNumberInFile.h"
 #include "Backtracking.h"
 
-bool VecComparator(vector<int> first, vector<int> second) 
+bool VecComparator(vector<int> first, vector<int> second)
 {
 	if (first.size() == second.size())
 	{
@@ -31,7 +31,8 @@ bool VecComparator(vector<int> first, vector<int> second)
 	return false;
 }
 
-bool ResultProcessing(int const &quantityDomino, VecInt &arrayDomino)
+
+std::string  ResultProcessing(int const &quantityDomino, std::vector< std::vector<int> > &arrayDomino)
 {
 	vector<int> bestMaxLenNumber;
 	string glueNumber;
@@ -59,6 +60,7 @@ bool ResultProcessing(int const &quantityDomino, VecInt &arrayDomino)
 		}
 		int max = *(std::max_element(arrayDominoCopy.begin(), arrayDominoCopy.end()));
 		WriteMaxNumberInFile(to_string(max));
+		return to_string(max);
 	}
 	else
 	{
@@ -69,6 +71,6 @@ bool ResultProcessing(int const &quantityDomino, VecInt &arrayDomino)
 			maxElstr += to_string(i);
 		}
 		WriteMaxNumberInFile(maxElstr);
+		return maxElstr;
 	}
-	return false;
 }

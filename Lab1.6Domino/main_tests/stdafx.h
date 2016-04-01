@@ -18,6 +18,16 @@
 #include <boost/test/unit_test.hpp>
 #include <iostream>
 #include <string>
+
+#include <string>
+#include <iostream> 
 #include <fstream>
+
+#include <algorithm>
+#include <vector>
+#include <fstream>
+using namespace std;
+
+typedef vector< vector<int> > VecInt;
 
 // TODO: reference additional headers your program requires here

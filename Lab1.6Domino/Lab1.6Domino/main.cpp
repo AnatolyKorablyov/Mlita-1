@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "Definition.h"
 #include "WriteMaxNumberInFile.h"
@@ -8,11 +9,34 @@
 using namespace std;
 typedef vector< vector<int> > VecInt;
 
+ErrorCode CheckErrorCodeForFirstLine(const int &firstLineInt)
+{
+	if (firstLineInt > MAX_QUANTITY_DOMINO)
+	{
+		return ErrorCode::THE_NUMBER_OF_DOMINO_MORE_20;
+	}
+	else if (firstLineInt < MIN_QUANTITY_DOMINO)
+	{
+		return ErrorCode::THE_NUMBER_OF_DOMINO_LESS_2;
+	}
+	return ALL_IS_OK;
+}
+ErrorCode CheckErrorCodeForDomino(const string &leftPoint, const string &rightPoint, const int &leftPointInt, const int &rightPointInt)
+{
+	if (!IsNumber(leftPoint) || !IsNumber(rightPoint))
+	{
+		return ErrorCode::INCORRECT_INPUT_DATA_IN_FILE;
+	}
+	if (CheckOnValidValues(leftPointInt) || CheckOnValidValues(rightPointInt))
+	{
+		return ErrorCode::INCORRECT_INPUT_DATA_IN_FILE;
+	}
+	return ALL_IS_OK;
+}
 
-ErrorCode StartProgram()
+ErrorCode StartProgram(const string &inputFileName)
 {
 	ifstream inputFile;
-	string inputFileName = "input.txt";
 	inputFile.open(inputFileName);
 	if (!inputFile.is_open())
 	{
@@ -22,6 +46,11 @@ ErrorCode StartProgram()
 	string rightPoint;
 	string firstLineStr;
 	inputFile >> firstLineStr;
+	unsigned firstLineInt = atoi(firstLineStr.c_str());
+	if (CheckErrorCodeForFirstLine(firstLineInt) != ALL_IS_OK)
+	{
+		return CheckErrorCodeForFirstLine(firstLineInt);
+	}
 	int countDominoForLeft = 0;
 	int countDominoForRight = 0;
 	int quantityLineStr = 0;
@@ -31,27 +60,17 @@ ErrorCode StartProgram()
 	{
 
 		inputFile >> leftPoint >> rightPoint;
-		if (atoi(firstLineStr.c_str()) > 20)
-		{
-			return ErrorCode::THE_NUMBER_OF_DOMINO_MORE_20;
-		}
-		else if (atoi(firstLineStr.c_str()) < 2)
-		{
-			return ErrorCode::THE_NUMBER_OF_DOMINO_LESS_2;
-		}
-		quantityDomino = atoi(firstLineStr.c_str());
+		unsigned leftPointInt = atoi(leftPoint.c_str());
+		unsigned rightPointInt = atoi(rightPoint.c_str());
+		quantityDomino = firstLineInt;
 		quantityLineStr++;
-		if (!IsNumber(leftPoint) || !IsNumber(rightPoint))
+		if (CheckErrorCodeForDomino(leftPoint, rightPoint, leftPointInt, rightPointInt) != ALL_IS_OK)
 		{
-			return ErrorCode::INCORRECT_INPUT_DATA_IN_FILE;
+			return CheckErrorCodeForDomino(leftPoint, rightPoint, leftPointInt, rightPointInt);;
 		}
-		if (CheckOnValidValues(leftPoint) || CheckOnValidValues(rightPoint))
-		{
-			return ErrorCode::INCORRECT_INPUT_DATA_IN_FILE;
-		}
-		arrayDomino[countDominoForLeft][countDominoForRight] = atoi(leftPoint.c_str());
+		arrayDomino[countDominoForLeft][countDominoForRight] = leftPointInt;
 		countDominoForRight++;
-		arrayDomino[countDominoForLeft][countDominoForRight] = atoi(rightPoint.c_str());
+		arrayDomino[countDominoForLeft][countDominoForRight] = rightPointInt;
 		countDominoForRight--;
 		countDominoForLeft++;
 	}
@@ -59,39 +78,44 @@ ErrorCode StartProgram()
 	{
 		return ErrorCode::INCORRECT_INPUT_DATA_IN_FILE;
 	}
-	if (ResultProcessing(quantityDomino, arrayDomino))
-	{
-		return ErrorCode::INCORRECT_INPUT_DATA_IN_FILE;
-	}
+	ResultProcessing(quantityDomino, arrayDomino);
 	return ErrorCode::ALL_IS_OK;
 }
 
-
-int main()
+int ErrorOutput(const int &ErrorsCode)
 {
-	switch (StartProgram())
+
+	switch (ErrorsCode)
 	{
 	case CANT_OPEN_INPUT_FILE:
 		cout << "cant open input file";
 		WriteMaxNumberInFile("cant open input file");
-		return 1;
+		break;
 	case CANT_OPEN_OUTPUT_FILE:
 		cout << "cant open input file";
 		WriteMaxNumberInFile("cant open input file");
-		return 1;
+		break;
 	case INCORRECT_INPUT_DATA_IN_FILE:
 		WriteMaxNumberInFile("incorrect input data in file");
 		cout << "incorrect input data in file";
-		return 1;
+		break;
 	case THE_NUMBER_OF_DOMINO_LESS_2:
 		WriteMaxNumberInFile("THE_NUMBER_OF_DOMINO_LESS_2");
 		cout << "THE_NUMBER_OF_DOMINO_LESS_2";
-		return 1;
+		break;
 	case THE_NUMBER_OF_DOMINO_MORE_20:
 		WriteMaxNumberInFile("THE_NUMBER_OF_DOMINO_MORE_20");
 		cout << "THE_NUMBER_OF_DOMINO_MORE_20";
-		return 1;
+		break;
 	case ALL_IS_OK:
 		return 0;
 	}
+	return 1;
+}
+
+int main()
+{
+	string inputFileName = "input.txt";
+	auto result = StartProgram(inputFileName);
+	return ErrorOutput(result);
 }

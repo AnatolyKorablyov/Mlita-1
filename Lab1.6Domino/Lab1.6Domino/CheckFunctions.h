@@ -1,3 +1,4 @@
 #pragma once
 bool IsNumber(string const &lineStr);
-bool CheckOnValidValues(string const &lineStr);
+bool CheckOnValidValues(int const &SymbolInt);
+
